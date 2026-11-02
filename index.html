@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<link rel="icon" href="assets/mascot.png">
+<title>Bug Blaster: Tembak Bug, Isi Peluru</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#dff2ff;--card:#fff;--ink:#26255f;--mut:#5b5a8f;--line:#26255f;--yel:#ffd23f;--mint:#2fcf8a;--cor:#ff7b7b;--blu:#5aa2ff;--pur:#b794ff;--ok:#d7f8e8;--bad:#ffe0e0;--track:#bfe4ff;--onc:#26255f;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17163f;--card:#25246b;--ink:#f3f2ff;--mut:#b9b8ee;--line:#f3f2ff;--ok:#14573f;--bad:#6b2530;--track:#33328a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#17163f;--card:#25246b;--ink:#f3f2ff;--mut:#b9b8ee;--line:#f3f2ff;--ok:#14573f;--bad:#6b2530;--track:#33328a;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"Fredoka","Nunito","Trebuchet MS",system-ui,sans-serif;font-size:18px;line-height:1.35;min-height:100vh}
+.wrap{max-width:480px;margin:0 auto;padding:12px 14px 24px}
+.l1{--c:var(--blu)}.l2{--c:var(--pur)}.l3{--c:var(--cor)}.l4{--c:var(--mint)}
+.card{background:var(--card);border:3px solid var(--line);border-radius:22px;box-shadow:0 6px 0 var(--line);padding:16px;margin-bottom:16px}
+h1{font-size:2.3rem;line-height:1.05;margin:4px 0 8px;font-weight:700}
+h2{font-size:1.25rem;margin:0 0 6px}
+p{margin:0 0 10px;color:var(--mut)}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:4px solid var(--blu);outline-offset:3px}
+button:disabled{cursor:default}
+.hud{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px;font-weight:600}
+.hud .sp{flex:1}
+.pill{background:var(--card);border:3px solid var(--line);border-radius:999px;padding:1px 11px;white-space:nowrap;font-size:1rem;line-height:1.4}
+.pill.sc{background:var(--yel);color:var(--onc)}
+button.pill{box-shadow:0 3px 0 var(--line)}
+button.pill:disabled{opacity:.45;box-shadow:none}
+button.pill.rf:not(:disabled){background:var(--mint);color:var(--onc)}
+.btn{display:block;width:100%;text-align:left;background:var(--card);border:3px solid var(--line);border-radius:16px;box-shadow:0 4px 0 var(--line);padding:12px 14px;margin-bottom:12px;font-weight:500;transition:transform .08s,box-shadow .08s}
+.btn:active:not(:disabled){transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.btn.go{background:var(--yel);color:var(--onc);font-weight:700;text-align:center;font-size:1.2rem;padding:14px}
+.btn:disabled.go{opacity:.5}
+.btn.plain.go{background:var(--card);color:var(--ink)}
+.hero{text-align:center}
+.hero .bot{font-size:4.6rem;line-height:1;animation:bob 1.6s ease-in-out infinite}
+.hero img.bot{height:140px;width:auto;display:block;margin:0 auto}
+.hero .row{font-size:1.8rem;letter-spacing:6px;margin:6px 0}
+@keyframes bob{50%{transform:translateY(-10px) rotate(-6deg)}}
+.stage{position:relative;width:100%;aspect-ratio:360/540;border:3px solid var(--line);border-radius:22px;box-shadow:0 6px 0 var(--line);overflow:hidden;background:#14133a}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+.ov{position:absolute;inset:0;overflow:auto;background:var(--bg);padding:12px}
+.tag{display:inline-block;font-size:.8rem;font-weight:600;color:var(--onc);background:var(--c);border:2px solid var(--line);border-radius:10px;padding:0 8px;margin-bottom:8px}
+.q{font-size:1.25rem;font-weight:600;margin:0;color:var(--ink)}
+.opt{display:flex;gap:12px;align-items:center}
+.opt b{flex:none;width:34px;height:34px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;color:var(--onc);background:var(--c)}
+.btn.right{background:var(--ok)}
+.btn.wrong{background:var(--bad)}
+.hint{font-size:.95rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;min-height:50px}
+.chip{background:var(--blu);color:var(--onc);border:3px solid var(--line);border-radius:12px;box-shadow:0 3px 0 var(--line);padding:6px 12px;font-weight:500}
+.chip.in{background:var(--yel)}
+.slots{background:var(--track);border:3px dashed var(--line);border-radius:16px;padding:10px;counter-reset:s}
+.slots .chip{counter-increment:s}
+.slots .chip::before{content:counter(s) ". ";font-weight:700}
+.fb{border:3px solid var(--line);border-radius:16px;padding:12px 14px}
+.fb.ok{background:var(--ok)}.fb.no{background:var(--bad)}
+.fb strong{display:block;font-size:1.2rem;margin-bottom:4px}
+.fb p{color:var(--ink);margin:0 0 4px}
+.fb .btn{margin:10px 0 0}
+.fb .btn.go+.btn{margin-top:12px}
+.mid{text-align:center}
+.pad{display:flex;gap:10px;justify-content:center;margin-top:16px}
+.pad button{flex:1;max-width:140px;height:58px;font-size:1.6rem;background:var(--card);border:3px solid var(--line);border-radius:16px;box-shadow:0 4px 0 var(--line);user-select:none;-webkit-user-select:none;touch-action:none}
+.pad button:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+.pad .fire{background:var(--yel);color:var(--onc)}
+.big{font-size:3rem;font-weight:700;text-align:center;line-height:1.1}
+@media (prefers-reduced-motion:reduce){.hero .bot{animation:none}.btn{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hud" id="hud"></div>
+  <div class="stage"><canvas id="cv" width="720" height="1080" aria-label="Bug Blaster"></canvas><div class="ov" id="ov"></div></div>
+  <div class="pad" id="pad"><button data-k="arrowleft" aria-label="Left">◀</button><button class="fire" data-k=" " aria-label="Shoot">🔫</button><button data-k="arrowright" aria-label="Right">▶</button></div>
+</div>
+<script>
+const UI={
+sub:['Shoot the bugs before they reach your robot! Your ammo is limited: answer coding questions to reload.','Tembak bug sebelum sampai ke robotmu! Pelurumu terbatas: jawab soal coding untuk mengisi ulang.'],
+ctl:['← → to move · Space to shoot','← → untuk bergerak · Spasi untuk menembak'],
+play:['▶ Play','▶ Main'],
+rf:['🔋 Reload','🔋 Isi ulang'],
+head:['Answer to reload 🔫','Jawab untuk mengisi peluru 🔫'],
+lesson:['Lesson','Pelajaran'],
+tip:['Tap the cards in the right order. Tap a card again to remove it.','Ketuk kartu sesuai urutan yang benar. Ketuk lagi untuk melepas.'],
+chk:['Check order','Cek urutan'],
+ok:['Correct! Ammo full, +1 ❤️','Benar! Peluru penuh, +1 ❤️'],
+no:['Not quite.','Belum tepat.'],
+corr:['Correct order:','Urutan yang benar:'],
+back:['▶ Back to the game','▶ Kembali ke game'],
+other:['Try another question','Coba soal lain'],
+fin:['Finish game','Selesai'],
+dead:['Battery empty!','Baterai habis!'],
+deadp:['Answer a question to revive your robot and reload your ammo.','Jawab satu soal untuk menghidupkan robotmu dan mengisi pelurunya.'],
+rev:['🔋 Answer to revive','🔋 Jawab untuk hidup lagi'],
+over:['Great run!','Permainan hebat!'],
+score:['Score','Skor'],
+best:['Best score','Skor tertinggi'],
+ans:['questions answered correctly','soal dijawab benar'],
+again:['Play again 🔁','Main lagi 🔁'],
+lang:['🌐 ID','🌐 EN']
+};
+const Q=[
+{l:1,q:['You follow a recipe, but two steps are in the wrong order. What happens?','Kamu mengikuti resep, tetapi dua langkahnya tertukar. Apa yang terjadi?'],a:[['The result may go wrong','Hasilnya bisa salah'],['Nothing changes','Tidak ada yang berubah'],['The recipe fixes itself','Resepnya memperbaiki dirinya sendiri'],['Steps never matter','Langkah tidak pernah penting']],e:['Order matters! Steps need a logical sequence.','Urutan itu penting! Langkah harus berurutan secara logis.']},
+{l:1,q:['Put the steps in the right order to make a cheese sandwich.','Susun langkah dengan urutan yang benar untuk membuat sandwich keju.'],o:[['Take two slices of bread','Ambil dua lembar roti'],['Put cheese on one slice','Taruh keju di satu lembar'],['Put the other slice on top','Tutup dengan lembar roti lainnya'],['Enjoy your sandwich','Nikmati sandwich-mu']],e:['Prepare first, build next, enjoy last.','Siapkan dulu, susun, lalu nikmati.']},
+{l:1,q:['You tested your instructions and found a missing step. What should you do?','Kamu menguji instruksimu dan menemukan satu langkah yang hilang. Apa yang harus dilakukan?'],a:[['Add the step and test again','Tambahkan langkahnya dan uji lagi'],['Ignore it','Abaikan saja'],['Delete everything','Hapus semuanya'],['Give up','Menyerah']],e:['Test and improve: fix the problem, then test again.','Uji dan perbaiki: betulkan masalahnya, lalu uji lagi.']},
+{l:2,q:['Which block adds a pause between two messages?','Blok mana yang menambah jeda di antara dua pesan?'],a:[['wait','wait'],['say','say'],['show','show'],['repeat','repeat']],e:['wait pauses the program for a few seconds.','wait menjeda program selama beberapa detik.']},
+{l:2,q:['Make a short conversation. Put the blocks in the right order.','Buat percakapan singkat. Susun blok dengan urutan yang benar.'],o:[['say Hello!','say Hello!'],['wait 2 seconds','wait 2 seconds'],['say Nice to meet you!','say Nice to meet you!']],e:['First message, then a pause, then the next message.','Pesan pertama, lalu jeda, lalu pesan berikutnya.']},
+{l:3,q:['A Sprite must jump exactly 5 times. Which block is best?','Sprite harus melompat tepat 5 kali. Blok mana yang paling cocok?'],a:[['repeat (5)','repeat (5)'],['forever','forever'],['wait','wait'],['hide','hide']],e:['The number is fixed, so use repeat (5). This is limited repetition.','Jumlahnya tetap, jadi pakai repeat (5). Ini pengulangan terbatas.']},
+{l:3,q:['A Sprite should keep moving until the project stops. Which block fits?','Sprite harus terus bergerak sampai proyek berhenti. Blok mana yang cocok?'],a:[['forever','forever'],['repeat (3)','repeat (3)'],['hide','hide'],['say','say']],e:['There is no fixed number, so use forever. This is unlimited repetition.','Tidak ada jumlah tetap, jadi pakai forever. Ini pengulangan tak terbatas.']},
+{l:3,q:['Why use repeat instead of writing the same block many times?','Mengapa memakai repeat dan bukan menulis blok yang sama berkali-kali?'],a:[['It makes instructions shorter','Instruksi jadi lebih singkat'],['It makes the Sprite bigger','Sprite jadi lebih besar'],['It changes the backdrop','Backdrop berubah'],['It hides the Sprite','Sprite jadi tersembunyi']],e:['Repetition makes instructions shorter and more efficient.','Pengulangan membuat instruksi lebih singkat dan efisien.']},
+{l:4,q:['Where should setup blocks go in a program?','Di mana blok setup sebaiknya diletakkan dalam program?'],a:[['At the beginning','Di bagian awal'],['At the very end','Di bagian paling akhir'],['Anywhere, it never matters','Di mana saja, tidak pernah berpengaruh'],['Only after forever','Hanya setelah forever']],e:['Setup blocks go first so the project starts as intended.','Blok setup diletakkan pertama agar proyek dimulai sesuai rencana.']},
+{l:4,q:['Your “set size” block is after the main actions, so the Sprite starts at the wrong size. How do you fix it?','Blok “set size” ada setelah aksi utama, sehingga Sprite dimulai dengan ukuran yang salah. Bagaimana memperbaikinya?'],a:[['Move it to the beginning and test again','Pindahkan ke awal dan uji lagi'],['Delete the Sprite','Hapus Sprite-nya'],['Add forever','Tambahkan forever'],['Change the backdrop','Ganti backdrop']],e:['Move setup blocks to the beginning, then test again.','Pindahkan blok setup ke awal, lalu uji lagi.']}
+];
+const $=id=>document.getElementById(id);
+const sh=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+let L=0,view='home',G=null,Z={queue:[]};
+const t=a=>a[L],u=k=>UI[k][L];
+const W=360,H=540,MAXH=5,MAXA=20;
+const cv=$('cv'),cx=cv.getContext('2d');cx.scale(2,2);
+const P={x:W/2,y:H-64,flash:0};
+const IMG=new Image();IMG.src='assets/mascot.png';
+const keys={};
+const stars=Array.from({length:45},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.5+.4}));
+function best(){try{return +localStorage.getItem('bb-best')||0}catch(e){return 0}}
+function saveBest(v){try{localStorage.setItem('bb-best',v)}catch(e){}}
+function newGame(){G={hearts:3,ammo:MAXA,score:0,right:0,t:0,sp:0,fire:0,en:[],bu:[],fx:[]};P.x=W/2;P.flash=0;view='play';render()}
+function setHud(){
+  if(!G)return;
+  $('hh').textContent='❤️'.repeat(G.hearts)+'🖤'.repeat(MAXH-G.hearts);
+  $('hs').textContent='⭐ '+G.score;
+  $('ha').textContent='🔫 '+G.ammo+'/'+MAXA;
+  $('rf').disabled=view!=='play'||(G.ammo>=MAXA&&G.hearts>=MAXH);
+}
+function hudHtml(){
+  return (G&&view!=='home'?'<span class="pill" id="hh"></span><span class="pill sc" id="hs"></span><span class="pill" id="ha"></span><button class="pill rf" id="rf" data-a="refill">'+u('rf')+'</button>':'')+'<span class="sp"></span><button class="pill" data-a="lang">'+u('lang')+'</button>';
+}
+function nextQ(forced){
+  if(!Z.queue.length)Z.queue=sh(Q.map((_,i)=>i));
+  Z.i=Z.queue.pop();const q=Q[Z.i];
+  Z.order=sh((q.o||q.a).map((_,i)=>i));Z.picked=[];Z.ans=null;Z.forced=forced;
+  view='quiz';
+}
+function quizHtml(){
+  const q=Q[Z.i],a=Z.ans;
+  let h='<div class="l'+q.l+'"><div class="card"><span class="tag">'+u('lesson')+' '+q.l+'</span><h2>'+u('head')+'</h2><p class="q">'+t(q.q)+'</p></div>';
+  if(q.o){
+    h+='<p class="hint">'+u('tip')+'</p><div class="chips slots">'+Z.picked.map(i=>'<button class="chip in" data-a="un" data-i="'+i+'"'+(a?' disabled':'')+'>'+t(q.o[i])+'</button>').join('')+'</div><div class="chips">'+Z.order.filter(i=>!Z.picked.includes(i)).map(i=>'<button class="chip" data-a="pk" data-i="'+i+'"'+(a?' disabled':'')+'>'+t(q.o[i])+'</button>').join('')+'</div><button class="btn go" data-a="chk"'+(a||Z.picked.length<q.o.length?' disabled':'')+'>'+u('chk')+'</button>';
+  }else{
+    h+=Z.order.map((i,p)=>{
+      let c='btn opt';
+      if(a&&i===0)c+=' right';
+      if(a&&!a.ok&&i===a.pick)c+=' wrong';
+      return '<button class="'+c+'" data-a="opt" data-i="'+i+'"'+(a?' disabled':'')+'><b>'+'ABCD'[p]+'</b><span>'+t(q.a[i])+'</span></button>';
+    }).join('');
+  }
+  if(a){
+    h+='<div class="fb '+(a.ok?'ok':'no')+'" role="status"><strong>'+(a.ok?u('ok'):u('no'))+'</strong><p>'+t(q.e)+'</p>'+(!a.ok&&q.o?'<p>'+u('corr')+' '+q.o.map(t).join(' → ')+'</p>':'');
+    if(a.ok||!Z.forced)h+='<button class="btn go" data-a="back">'+u('back')+'</button>';
+    if(!a.ok){h+='<button class="btn go'+(Z.forced?'':' plain')+'" data-a="other">'+u('other')+'</button>';if(Z.forced)h+='<button class="btn go plain" data-a="end">'+u('fin')+'</button>'}
+    h+='</div>';
+  }
+  return h+'</div>';
+}
+function ovHtml(){
+  if(view==='home')return '<div class="card hero"><img class="bot" alt="" src="'+IMG.src+'"><h1>Bug Blaster</h1><p>'+u('sub')+'</p><div class="row" aria-hidden="true">🐛🐞🪲👾</div><p>'+u('ctl')+'</p><button class="btn go" data-a="start">'+u('play')+'</button>'+(best()?'<p class="mid">'+u('best')+': '+best()+'</p>':'')+'</div>';
+  if(view==='quiz')return quizHtml();
+  if(view==='dead')return '<div class="card mid"><div style="font-size:4rem;line-height:1">🪫</div><h2>'+u('dead')+'</h2><p>'+u('deadp')+'</p><button class="btn go" data-a="revive">'+u('rev')+'</button><button class="btn go plain" data-a="end">'+u('fin')+'</button></div>';
+  if(view==='over')return '<div class="card"><div class="mid" style="font-size:3rem" aria-hidden="true">🏆</div><h2 class="mid">'+u('over')+'</h2><div class="big">'+G.score+'</div><p class="mid">'+G.right+' '+u('ans')+'</p><p class="mid">'+u('best')+': '+best()+'</p><button class="btn go" data-a="start">'+u('again')+'</button></div>';
+  return '';
+}
+function render(){
+  $('hud').innerHTML=hudHtml();
+  const o=$('ov');o.innerHTML=ovHtml();o.style.display=view==='play'?'none':'block';o.scrollTop=0;
+  setHud();
+}
+function finish(){if(G.score>best())saveBest(G.score);view='over';render()}
+function resolve(ok,pick){Z.ans={ok,pick};if(ok){G.ammo=MAXA;G.hearts=G.hearts<=0?2:Math.min(MAXH,G.hearts+1);G.right++}render()}
+function act(a,i){
+  const q=Q[Z.i];
+  if(a==='lang'){L=1-L;const sc=$('ov').scrollTop;render();$('ov').scrollTop=sc;return}
+  if(a==='start')newGame();
+  else if(a==='refill'&&view==='play'&&(G.ammo<MAXA||G.hearts<MAXH)){nextQ(false);render()}
+  else if(a==='revive'){nextQ(true);render()}
+  else if(a==='other'){nextQ(Z.forced);render()}
+  else if(a==='back'){view='play';render()}
+  else if(a==='end')finish();
+  else if(a==='opt'&&!Z.ans)resolve(+i===0,+i);
+  else if(a==='pk'&&!Z.ans){Z.picked.push(+i);const s=$('ov').scrollTop;render();$('ov').scrollTop=s}
+  else if(a==='un'&&!Z.ans){Z.picked=Z.picked.filter(x=>x!==+i);const s=$('ov').scrollTop;render();$('ov').scrollTop=s}
+  else if(a==='chk'&&!Z.ans&&Z.picked.length===q.o.length)resolve(Z.picked.every((x,k)=>x===k),-1);
+  if(Z.ans&&(a==='opt'||a==='chk')){const f=document.querySelector('.fb');if(f)f.scrollIntoView({behavior:'smooth',block:'nearest'})}
+}
+$('hud').onclick=$('ov').onclick=e=>{const b=e.target.closest('[data-a]');if(b)act(b.dataset.a,b.dataset.i)};
+addEventListener('keydown',e=>{
+  const k=e.key.toLowerCase();
+  if(view==='play'&&[' ','arrowleft','arrowright','arrowup','arrowdown'].includes(k)){e.preventDefault();if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+  keys[k]=1;
+});
+addEventListener('keyup',e=>{const k=e.key.toLowerCase();if(k===' '&&view==='play')e.preventDefault();keys[k]=0});
+document.querySelectorAll('#pad button').forEach(b=>{
+  const k=b.dataset.k;
+  b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=1});
+  ['pointerup','pointerleave','pointercancel'].forEach(ev=>b.addEventListener(ev,()=>{keys[k]=0}));
+});
+function hit(en){
+  G.hearts--;P.flash=.5;G.fx.push({x:en.x,y:Math.min(en.y,H-40),t:.4,e:'💥'});
+  setHud();
+  if(G.hearts<=0){view='dead';render()}
+}
+function update(dt){
+  G.t+=dt;P.flash=Math.max(0,P.flash-dt);
+  const mv=(keys.arrowright||keys.d?1:0)-(keys.arrowleft||keys.a?1:0);
+  if(mv)P.x=Math.max(22,Math.min(W-22,P.x+mv*320*dt));
+  G.fire-=dt;
+  if(keys[' ']&&G.fire<=0&&G.ammo>0){
+    G.fire=.22;G.ammo--;G.bu.push({x:P.x,y:P.y-24});setHud();
+    if(G.ammo<=0){nextQ(true);render();return}
+  }
+  G.sp-=dt;
+  if(G.sp<=0){
+    G.sp=Math.max(.5,1.25-G.t*.012);
+    const big=G.t>15&&Math.random()<.14;
+    G.en.push({x:30+Math.random()*(W-60),y:-30,v:(big?42:62)+Math.min(90,G.t*1.3),hp:big?3:1,s:big?54:34,e:big?'👾':['🐛','🐞','🪲'][Math.floor(Math.random()*3)],ph:Math.random()*6});
+  }
+  G.bu.forEach(b=>b.y-=540*dt);
+  G.bu=G.bu.filter(b=>b.y>-20);
+  for(const en of G.en){
+    en.y+=en.v*dt;en.x+=Math.sin(en.ph+G.t*2)*26*dt;
+    for(const b of G.bu){
+      if(!b.d&&Math.abs(b.x-en.x)<en.s*.55&&Math.abs(b.y-en.y)<en.s*.55){b.d=1;en.hp--;en.fl=.1;
+        if(en.hp<=0){en.dead=1;G.score+=en.s>40?30:10;G.fx.push({x:en.x,y:en.y,t:.35,e:'✨'});setHud()}}
+    }
+    if(!en.dead&&(en.y>H-34||(Math.abs(en.x-P.x)<30&&Math.abs(en.y-P.y)<32))){en.dead=1;hit(en);if(view!=='play')return}
+    if(en.fl)en.fl-=dt;
+  }
+  G.bu=G.bu.filter(b=>!b.d);G.en=G.en.filter(e=>!e.dead);
+  G.fx.forEach(f=>f.t-=dt);G.fx=G.fx.filter(f=>f.t>0);
+}
+function draw(){
+  cx.fillStyle='#14133a';cx.fillRect(0,0,W,H);
+  cx.fillStyle='#ffffff';
+  for(const s of stars){cx.globalAlpha=.5;cx.beginPath();cx.arc(s.x,s.y,s.r,0,6.3);cx.fill()}
+  cx.globalAlpha=1;
+  cx.strokeStyle='#ff7b7b';cx.lineWidth=2;cx.setLineDash([6,8]);cx.beginPath();cx.moveTo(0,H-34);cx.lineTo(W,H-34);cx.stroke();cx.setLineDash([]);
+  if(!G)return;
+  cx.textAlign='center';cx.textBaseline='middle';
+  for(const en of G.en){cx.globalAlpha=en.fl>0?.5:1;cx.font=en.s+'px serif';cx.fillText(en.e,en.x,en.y)}
+  cx.globalAlpha=1;
+  cx.fillStyle='#ffd23f';
+  for(const b of G.bu){cx.beginPath();cx.roundRect(b.x-2,b.y-8,4,16,2);cx.fill()}
+  if(!(P.flash>0&&Math.floor(P.flash*20)%2)){if(IMG.complete&&IMG.naturalWidth)cx.drawImage(IMG,P.x-21,P.y-30,42,60);else{cx.font='40px serif';cx.fillText('🤖',P.x,P.y)}}
+  for(const f of G.fx){cx.globalAlpha=Math.min(1,f.t*4);cx.font='34px serif';cx.fillText(f.e,f.x,f.y)}
+  cx.globalAlpha=1;
+}
+let last=0;
+function loop(ts){
+  const dt=Math.min(.05,(ts-last)/1000||0);last=ts;
+  if(G&&view==='play')update(dt);
+  draw();requestAnimationFrame(loop);
+}
+render();requestAnimationFrame(loop);
+</script>
+</body>
+</html>
